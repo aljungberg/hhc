@@ -9,7 +9,6 @@ making it the shortest possible way to express an integer in a URL.
 
 ## Usage
 
-
     from hexahexacontadecimal import hexahexacontadecimal_encode_int, hexahexacontadecimal_decode_int
 
     print hexahexacontadecimal_encode_int(302231454903657293676544)  # 'iFsGUkO.0tsxw'
