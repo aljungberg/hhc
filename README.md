@@ -1,7 +1,7 @@
 Hexahexacontadecimal
 ====================
 
-*Hexahexacontadecimal is the most compact way to encode a number into a URL.*
+**Hexahexacontadecimal is the most compact way to encode a number into a URL.**
 
 Hexahexacontadecimal is a compact format to express a number in a URL. It uses all characters allowed in
 a URL without escaping -- the [unreserved characters](http://tools.ietf.org/html/rfc3986#section-2.3) --
@@ -9,13 +9,24 @@ making it the shortest possible way to express an integer in a URL.
 
 ## Usage
 
+
     from hexahexacontadecimal import hexahexacontadecimal_encode_int, hexahexacontadecimal_decode_int
 
     print hexahexacontadecimal_encode_int(302231454903657293676544)  # 'iFsGUkO.0tsxw'
     print hexahexacontadecimal_decode_int('iFsGUkO.0tsxw')           # 302231454903657293676544L
 
-Note that urllib.quote escapes tilde (~) (http://bugs.python.org/issue16285), which is not necessary as
+Note that `urllib.quote` [escapes the tilde character (~)](http://bugs.python.org/issue16285), which is not necessary as
 of RFC3986.
+
+## On the command line
+
+With [pyle](https://github.com/aljungberg/pyle) you can easily use hexahexacontadecimal on the command line.
+
+    $ wc -c LICENSE MANIFEST setup.py | pyle -m hexahexacontadecimal -e "'%-10s Hexhexconta bytes:' % words[1], hexahexacontadecimal.hexahexacontadecimal_encode_int(int(words[0]))"
+    LICENSE    Hexhexconta bytes: MV
+    MANIFEST   Hexhexconta bytes: 1z
+    setup.py   Hexhexconta bytes: GI
+    total      Hexhexconta bytes: ei
 
 ### Hexahexacontadecimal vs Base 64 in URLs
 
@@ -50,6 +61,8 @@ That big SHA-512 you always wanted to write in a URL:
     >>> urlquote(hexahexacontadecimal_encode_int(n))
     'JK84xqGD9FMXPNubPghADlRhBUzlqRscC2h~8xmi99PvuQsUCIB2CHGhMUQR8FLm72.Hbbctkqi89xspay~y4'
 
+Massive savings.
+
 ### Are the savings really significant?
 
 If you're currently doing your BASE64 encoding the naive way, then yes:
@@ -61,7 +74,7 @@ If you're currently doing your BASE64 encoding the naive way, then yes:
 
 ### But what if I use Base64 without padding?
 
-Then the savings are not as significant. But it's still an improvement. Using the code from http://stackoverflow.com/a/561704/76900:
+Then the savings are not as significant. But it's still an improvement. Using the code from [this StackOverFlow question](http://stackoverflow.com/a/561704/76900):
 
     >>> from hexahexacontadecimal.num_encode_base64 import num_encode as num_encode_base64
     >>> n = 64 ** 5 + 1
@@ -83,6 +96,8 @@ Then the savings are not as significant. But it's still an improvement. Using th
     295840
     >>> sum(len(urlquote(hexahexacontadecimal_encode_int(n))) for n in xrange(10 ** 5))
     295578
+
+Why settle for less than perfect?
 
 ## Installation
 
