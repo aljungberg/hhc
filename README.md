@@ -107,6 +107,12 @@ Why settle for less than perfect?
 
 This file and docstrings.
 
+## Tests
+
+To run the unit tests:
+
+    nosetests --with-doctest
+
 ## License
 
 Free to use and modify under the terms of the BSD open source license.
