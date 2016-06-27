@@ -3,9 +3,9 @@ Hexahexacontadecimal
 
 **Hexahexacontadecimal is the most compact way to encode a number into a URL.**
 
-Hexahexacontadecimal is a compact format to express a number in a URL. It uses all characters allowed in
-a URL without escaping -- the [unreserved characters](http://tools.ietf.org/html/rfc3986#section-2.3) --
-making it the shortest possible way to express an integer in a URL.
+Hexahexacontadecimal is a compact format to express a number or binary data in a URL. It uses all characters allowed in
+a URL without escaping -- the [unreserved characters](http://tools.ietf.org/html/rfc3986#section-2.3) -- making it the
+shortest possible way to express an integer in a URL.
 
 ## Usage
 
@@ -27,7 +27,7 @@ With [pyle](https://github.com/aljungberg/pyle) you can easily use hexahexaconta
     setup.py   Hexhexconta bytes: GI
     total      Hexhexconta bytes: ei
 
-### Hexahexacontadecimal vs Base 64 in URLs
+### Hexahexacontadecimal vs Base64 in URLs
 
     >>> n = 292231454903657293676544
     >>> import base64
@@ -36,7 +36,7 @@ With [pyle](https://github.com/aljungberg/pyle) you can easily use hexahexaconta
     >>> urlquote(hexahexacontadecimal_encode_int(n))
     'gpE4Xoy7fw5AO'
 
-Worst case scenario for plain Base 64:
+Worst case scenario for plain Base64:
 
     >>> n = 64 ** 5 + 1
     >>> urlquote(base64.urlsafe_b64encode(long_to_binary(n)))
@@ -73,7 +73,8 @@ If you're currently doing your BASE64 encoding the naive way, then yes:
 
 ### But what if I use Base64 without padding?
 
-Then the savings are not as significant. But it's still an improvement. Using the code from [this StackOverFlow question](http://stackoverflow.com/a/561704/76900):
+Then the savings are not as significant. But it's still an improvement. Using the code from [this StackOverFlow
+question](http://stackoverflow.com/a/561704/76900):
 
     >>> from hexahexacontadecimal.num_encode_base64 import num_encode as num_encode_base64
     >>> n = 64 ** 5 + 1
