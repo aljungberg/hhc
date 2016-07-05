@@ -10,13 +10,13 @@ except (IOError, OSError, ImportError):
 
 setup(
     name='hexahexacontadecimal',
-    version='1.0',
+    version='2.0',
     description='Encode and decode hexahexacontadecimal numbers, a compact number representation for URLs.',
     author='Alexander Ljungberg',
     author_email='aljungberg@slevenbits.com',
     url='https://github.com/aljungberg/hexahexacontadecimal',
     packages=['hexahexacontadecimal'],
-    keywords=["base64", "hexahexacontadecimal", "base66", "url"],
+    keywords=["base64", "hexahexacontadecimal", "hhc", "base66", "url"],
     classifiers=[
         "Programming Language :: Python",
         "Development Status :: 5 - Production/Stable",

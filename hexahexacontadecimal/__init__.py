@@ -16,7 +16,7 @@ of RFC3986.
     >>> import base64
     >>> urlquote(base64.urlsafe_b64encode(long_to_binary(n)))
     'PeHmHzZFTcAAAA%3D%3D'
-    >>> urlquote(hexahexacontadecimal_encode_int(n))
+    >>> urlquote(hhc(n))
     'gpE4Xoy7fw5AO'
 
 Worst case scenario for plain Base64:
@@ -24,7 +24,7 @@ Worst case scenario for plain Base64:
     >>> n = 64 ** 5 + 1
     >>> urlquote(base64.urlsafe_b64encode(long_to_binary(n)))
     'QAAAAQ%3D%3D'
-    >>> urlquote(hexahexacontadecimal_encode_int(n))
+    >>> urlquote(hhc(n))
     'ucrDZ'
 
 Worst case for hexahexacontadecimal:
@@ -32,7 +32,7 @@ Worst case for hexahexacontadecimal:
     >>> n = 66 ** 5 + 1
     >>> urlquote(base64.urlsafe_b64encode(long_to_binary(n)))
     'SqUUIQ%3D%3D'
-    >>> urlquote(hexahexacontadecimal_encode_int(n))
+    >>> urlquote(hhc(n))
     '100001'
 
 That big SHA-512 you always wanted to write in a URL:
@@ -40,7 +40,7 @@ That big SHA-512 you always wanted to write in a URL:
     >>> n = 2 ** 512
     >>> urlquote(base64.urlsafe_b64encode(long_to_binary(n)))
     'AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%3D'
-    >>> urlquote(hexahexacontadecimal_encode_int(n))
+    >>> urlquote(hhc(n))
     'JK84xqGD9FMXPNubPghADlRhBUzlqRscC2h~8xmi99PvuQsUCIB2CHGhMUQR8FLm72.Hbbctkqi89xspay~y4'
 
 Massive savings.
@@ -51,7 +51,7 @@ If you're currently doing your Base64 encoding the naive way, then yes:
 
     >>> sum(len(urlquote(base64.urlsafe_b64encode(long_to_binary(n)))) for n in xrange(10 ** 5))
     531584
-    >>> sum(len(urlquote(hexahexacontadecimal_encode_int(n))) for n in xrange(10 ** 5))
+    >>> sum(len(urlquote(hhc(n))) for n in xrange(10 ** 5))
     295578
 
 ### But what if I use Base64 without padding?
@@ -63,29 +63,33 @@ question](http://stackoverflow.com/a/561704/76900):
     >>> n = 64 ** 5 + 1
     >>> urlquote(num_encode_base64(n))
     'BAAAAB'
-    >>> urlquote(hexahexacontadecimal_encode_int(n))
+    >>> urlquote(hhc(n))
     'ucrDZ'
     >>> n = 66 ** 5 + 1
     >>> urlquote(num_encode_base64(n))
     'BKpRQh'
-    >>> urlquote(hexahexacontadecimal_encode_int(n))
+    >>> urlquote(hhc(n))
     '100001'
     >>> n = 2 ** 512
     >>> urlquote(num_encode_base64(n))
     'EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-    >>> urlquote(hexahexacontadecimal_encode_int(n))
+    >>> urlquote(hhc(n))
     'JK84xqGD9FMXPNubPghADlRhBUzlqRscC2h~8xmi99PvuQsUCIB2CHGhMUQR8FLm72.Hbbctkqi89xspay~y4'
     >>> sum(len(urlquote(num_encode_base64(n))) for n in xrange(10 ** 5))
     295840
-    >>> sum(len(urlquote(hexahexacontadecimal_encode_int(n))) for n in xrange(10 ** 5))
+    >>> sum(len(urlquote(hhc(n))) for n in xrange(10 ** 5))
     295578
 
 Why settle for less than perfect?
 
 """
 
+from __future__ import absolute_import, division, print_function
+
 from io import StringIO
 import urllib
+
+__all__ = ['hhc', 'hhc_to_int']
 
 BASE66_ALPHABET = u"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_.~"
 BASE = len(BASE66_ALPHABET)
@@ -126,20 +130,20 @@ def binary_to_long(b):
     return int(b.encode('hex'), 16)
 
 
-def hexahexacontadecimal_encode_int(n):
+def hhc(n):
     """Represent a number in hexahexacontadecimal, a compact format of unreserved URL characters.
 
-    >>> hexahexacontadecimal_encode_int(0)
+    >>> hhc(0)
     '0'
-    >>> hexahexacontadecimal_encode_int(1)
+    >>> hhc(1)
     '1'
-    >>> hexahexacontadecimal_encode_int(65)
+    >>> hhc(65)
     '~'
-    >>> hexahexacontadecimal_encode_int(66)
+    >>> hhc(66)
     '10'
-    >>> hexahexacontadecimal_encode_int(67)
+    >>> hhc(67)
     '11'
-    >>> hexahexacontadecimal_encode_int(302231454903657293676544)
+    >>> hhc(302231454903657293676544)
     'iFsGUkO.0tsxw'
 
     """
@@ -151,23 +155,24 @@ def hexahexacontadecimal_encode_int(n):
     while n:
         n, t = divmod(n, BASE)
         r.write(BASE66_ALPHABET[t])
+
     return r.getvalue().encode('ascii')[::-1]
 
 
-def hexahexacontadecimal_decode_int(s):
+def hhc_to_int(s):
     """Parse a number expressed in hexahexacontadecimal as an integer (or long).
 
-    >>> hexahexacontadecimal_decode_int('0')
+    >>> hhc_to_int('0')
     0
-    >>> hexahexacontadecimal_decode_int('1')
+    >>> hhc_to_int('1')
     1
-    >>> hexahexacontadecimal_decode_int('~')
+    >>> hhc_to_int('~')
     65
-    >>> hexahexacontadecimal_decode_int('10')
+    >>> hhc_to_int('10')
     66
-    >>> hexahexacontadecimal_decode_int('11')
+    >>> hhc_to_int('11')
     67
-    >>> hexahexacontadecimal_decode_int('iFsGUkO.0tsxw')
+    >>> hhc_to_int('iFsGUkO.0tsxw')
     302231454903657293676544L
 
     """

@@ -113,6 +113,17 @@ To run the unit tests:
 
     nosetests --with-doctest
 
+## Changelog
+
+### 1.0
+
+Initial release.
+
+### 2.0
+
+* Shorter, more Pythonic method names. The main function is now simply called `hhc`, styled after Python's built in `hex` function. To decode the same, `hhc_to_int` is now used.
+* `import * from hexahexacontadecimal` now only imports the main functions.
+
 ## License
 
 Free to use and modify under the terms of the BSD open source license.
