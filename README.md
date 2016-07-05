@@ -3,8 +3,6 @@ Hexahexacontadecimal
 
 **Hexahexacontadecimal is the most compact way to encode a number into a URL.**
 
-Encode and decode hexahexacontadecimal numbers.
-
 Hexahexacontadecimal is a compact format to express a number or binary data in a URL. It uses all characters allowed in
 a URL without escaping -- the [unreserved characters](http://tools.ietf.org/html/rfc3986#section-2.3) -- making it the
 shortest possible way to express an integer in a URL.
@@ -102,6 +100,8 @@ If you wish to be able to sort a list of HHC values numerically there is a varia
 This file and docstrings.
 
 ## Tests
+
+[![Build Status](https://travis-ci.org/aljungberg/hexahexacontadecimal.svg?branch=master)](https://travis-ci.org/aljungberg/hexahexacontadecimal)
 
 To run the unit tests:
 
