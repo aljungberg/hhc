@@ -89,9 +89,10 @@ from __future__ import absolute_import, division, print_function
 from io import StringIO
 import urllib
 
-__all__ = ['hhc', 'hhc_to_int', 'hhc_url_quote']
+__all__ = ['hhc', 'hhc_to_int', 'hhc_url_quote', 'sortable_hhc', 'sortable_hhc_to_int']
 
 BASE66_ALPHABET = u"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_.~"
+SORTABLE_BASE66_ALPHABET = u"-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~"
 BASE = len(BASE66_ALPHABET)
 
 
@@ -130,7 +131,7 @@ def binary_to_long(b):
     return int(b.encode('hex'), 16)
 
 
-def hhc(n):
+def hhc(n, alphabet=BASE66_ALPHABET):
     """Represent a number in hexahexacontadecimal, a compact format of unreserved URL characters.
 
     >>> hhc(0)
@@ -149,17 +150,17 @@ def hhc(n):
     """
 
     if n == 0:
-        return BASE66_ALPHABET[0].encode('ascii')
+        return alphabet[0].encode('ascii')
 
     r = StringIO()
     while n:
         n, t = divmod(n, BASE)
-        r.write(BASE66_ALPHABET[t])
+        r.write(alphabet[t])
 
     return r.getvalue().encode('ascii')[::-1]
 
 
-def hhc_to_int(s):
+def hhc_to_int(s, alphabet=BASE66_ALPHABET):
     """Parse a number expressed in hexahexacontadecimal as an integer (or long).
 
     >>> hhc_to_int('0')
@@ -179,6 +180,77 @@ def hhc_to_int(s):
 
     n = 0
     for c in s:
-        n = n * BASE + BASE66_ALPHABET.index(c)
+        n = n * BASE + alphabet.index(c)
 
     return n
+
+
+def sortable_hhc(n, width=0):
+    """
+
+    Represent a number in sortable hexahexacontadecimal, a compact format of unreserved URL characters which sorts
+    the same alphabetically as numerically.
+
+    This version is incompatible with standard HHC and it's a little less "user friendly". With regular HHC counting
+    goes "0", "1", "2", ... "10", "11", "12"... which looks nice and natural. With sortable_hhc the same series is
+    "-", ".", ".-", ".." which looks like some kind of morse code.
+
+    >>> sortable_hhc(0)
+    '-'
+    >>> sortable_hhc(1)
+    '.'
+    >>> sortable_hhc(65)
+    '~'
+    >>> sortable_hhc(66)
+    '.-'
+    >>> sortable_hhc(67)
+    '..'
+    >>> sortable_hhc(302231454903657293676544)
+    'fDpEShMz-qput'
+
+    With standard HHC, alphabetical comparison is not the same as numeric comparison:
+    >>> hhc(67) < hhc(128)
+    False
+
+    With sortable_hhc, two sortable_hhc numbers of the same width will compare the same as their numeric value.
+
+    >>> sortable_hhc(67, width=2) < sortable_hhc(128, width=2)
+    True
+    >>> sorted([sortable_hhc(x) for x in range(66)]) == [sortable_hhc(x) for x in range(66)]
+    True
+
+    The width parameter allows you to set a minimum width. As long as that width is wider than you'll ever need,
+    all generated values will sort alphabetically without decoding.
+
+    >>> sortable_hhc(67, width=4)
+    '--..'
+    >>> sorted([sortable_hhc(x, width=2) for x in range(512)]) == [sortable_hhc(x, width=2) for x in range(512)]
+    True
+
+    """
+
+    r = hhc(n, alphabet=SORTABLE_BASE66_ALPHABET)
+    return r.rjust(width, SORTABLE_BASE66_ALPHABET[0].encode('ascii')) if width else r
+
+
+def sortable_hhc_to_int(s, alphabet=BASE66_ALPHABET):
+    """Parse a number expressed in sortable hexahexacontadecimal as an integer (or long).
+
+    >>> sortable_hhc_to_int('-')
+    0
+    >>> sortable_hhc_to_int('.')
+    1
+    >>> sortable_hhc_to_int('~')
+    65
+    >>> sortable_hhc_to_int('.-')
+    66
+    >>> sortable_hhc_to_int('..')
+    67
+    >>> sortable_hhc_to_int('----..')
+    67
+    >>> sortable_hhc_to_int('fDpEShMz-qput')
+    302231454903657293676544L
+
+    """
+
+    return hhc_to_int(s, SORTABLE_BASE66_ALPHABET)

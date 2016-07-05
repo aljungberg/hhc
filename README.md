@@ -99,6 +99,15 @@ question](http://stackoverflow.com/a/561704/76900):
 
 Why settle for less than perfect?
 
+### Sorting
+
+If you wish to be able to sort a list of HHC values numerically there is a variant of HHC that allows this. See `sortable_hhc`.
+
+    >>> hhc(67) < hhc(128)
+    False
+    >>> sortable_hhc(67, width=2) < sortable_hhc(128, width=2)
+    True
+
 ## Installation
 
     pip install hexahexacontadecimal
@@ -121,6 +130,7 @@ Initial release.
 
 ### 2.0
 
+* New: sortable HHC. This variant of HHC sorts the same alphabetically as numerically for equal length strings.
 * Shorter, more Pythonic method names. The main function is now simply called `hhc`, styled after Python's built in `hex` function. To decode the same, `hhc_to_int` is now used.
 * `import * from hexahexacontadecimal` now only imports the main functions.
 * `urlquote` was renamed to `hhc_url_quote` to make it easier to differentiate from the standard library method.
