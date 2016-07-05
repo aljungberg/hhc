@@ -8,7 +8,14 @@ a URL without escaping -- the [unreserved characters](http://tools.ietf.org/html
 shortest possible way to express an integer in a URL.
 
 Note that `urllib.quote` [escapes the tilde character (~)](http://bugs.python.org/issue16285), which is not necessary as
-of RFC3986.
+of RFC3986. The `hhc_url_quote` function is provided to help with this.
+
+## Usage
+
+    from hexahexacontadecimal import hhc, hhc_to_int
+
+    print hhc(302231454903657293676544)  # 'iFsGUkO.0tsxw'
+    print hhc_to_int('iFsGUkO.0tsxw')    # 302231454903657293676544L
 
 ### Hexahexacontadecimal vs Base64 in URLs
 
@@ -81,6 +88,15 @@ question](http://stackoverflow.com/a/561704/76900):
     295578
 
 Why settle for less than perfect?
+
+### Sorting
+
+If you wish to be able to sort a list of HHC values numerically there is a variant of HHC that allows this. See `sortable_hhc`.
+
+    >>> hhc(67) < hhc(128)
+    False
+    >>> sortable_hhc(67, width=2) < sortable_hhc(128, width=2)
+    True
 
 """
 
