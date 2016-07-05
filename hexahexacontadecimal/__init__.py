@@ -84,20 +84,24 @@ Why settle for less than perfect?
 
 """
 
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import, division, print_function, unicode_literals
 
-from io import StringIO
+from io import BytesIO
 import urllib
 
 __all__ = ['hhc', 'hhc_to_int', 'hhc_url_quote', 'sortable_hhc', 'sortable_hhc_to_int']
 
-BASE66_ALPHABET = u"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_.~"
-SORTABLE_BASE66_ALPHABET = u"-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~"
+BASE66_ALPHABET = b"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_.~"
+SORTABLE_BASE66_ALPHABET = b"-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~"
 BASE = len(BASE66_ALPHABET)
 
 
 def hhc_url_quote(s, safe=None):
-    """Like urllib.quote() but don't escape ~, in accordance with RFC3986."""
+    """Like urllib.quote() but don't escape ~, in accordance with RFC3986.
+
+    >>> hhc_url_quote(hhc(65))
+    '~'
+    """
 
     return urllib.quote(s, safe='~' + (safe or ''))
 
@@ -120,11 +124,11 @@ def long_to_binary(n):
 def binary_to_long(b):
     """Take a binary string and read it as an integer.
 
-    >>> binary_to_long('\\x00')
+    >>> binary_to_long(b'\\x00')
     0
-    >>> binary_to_long('\\xff')
+    >>> binary_to_long(b'\\xff')
     255
-    >>> binary_to_long('\\x02\\x03')
+    >>> binary_to_long(b'\\x02\\x03')
     515
     """
 
@@ -132,7 +136,7 @@ def binary_to_long(b):
 
 
 def hhc(n, alphabet=BASE66_ALPHABET):
-    """Represent a number in hexahexacontadecimal, a compact format of unreserved URL characters.
+    """Represent a number in hexahexacontadecimal, a compact ASCII format of unreserved URL characters.
 
     >>> hhc(0)
     '0'
@@ -150,14 +154,14 @@ def hhc(n, alphabet=BASE66_ALPHABET):
     """
 
     if n == 0:
-        return alphabet[0].encode('ascii')
+        return alphabet[0]
 
-    r = StringIO()
+    r = BytesIO()
     while n:
         n, t = divmod(n, BASE)
         r.write(alphabet[t])
 
-    return r.getvalue().encode('ascii')[::-1]
+    return r.getvalue()[::-1]
 
 
 def hhc_to_int(s, alphabet=BASE66_ALPHABET):
@@ -230,7 +234,7 @@ def sortable_hhc(n, width=0):
     """
 
     r = hhc(n, alphabet=SORTABLE_BASE66_ALPHABET)
-    return r.rjust(width, SORTABLE_BASE66_ALPHABET[0].encode('ascii')) if width else r
+    return r.rjust(width, SORTABLE_BASE66_ALPHABET[0]) if width else r
 
 
 def sortable_hhc_to_int(s, alphabet=BASE66_ALPHABET):
