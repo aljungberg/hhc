@@ -14,33 +14,33 @@ of RFC3986.
 
     >>> n = 292231454903657293676544
     >>> import base64
-    >>> urlquote(base64.urlsafe_b64encode(long_to_binary(n)))
+    >>> hhc_url_quote(base64.urlsafe_b64encode(long_to_binary(n)))
     'PeHmHzZFTcAAAA%3D%3D'
-    >>> urlquote(hhc(n))
+    >>> hhc_url_quote(hhc(n))
     'gpE4Xoy7fw5AO'
 
 Worst case scenario for plain Base64:
 
     >>> n = 64 ** 5 + 1
-    >>> urlquote(base64.urlsafe_b64encode(long_to_binary(n)))
+    >>> hhc_url_quote(base64.urlsafe_b64encode(long_to_binary(n)))
     'QAAAAQ%3D%3D'
-    >>> urlquote(hhc(n))
+    >>> hhc_url_quote(hhc(n))
     'ucrDZ'
 
 Worst case for hexahexacontadecimal:
 
     >>> n = 66 ** 5 + 1
-    >>> urlquote(base64.urlsafe_b64encode(long_to_binary(n)))
+    >>> hhc_url_quote(base64.urlsafe_b64encode(long_to_binary(n)))
     'SqUUIQ%3D%3D'
-    >>> urlquote(hhc(n))
+    >>> hhc_url_quote(hhc(n))
     '100001'
 
 That big SHA-512 you always wanted to write in a URL:
 
     >>> n = 2 ** 512
-    >>> urlquote(base64.urlsafe_b64encode(long_to_binary(n)))
+    >>> hhc_url_quote(base64.urlsafe_b64encode(long_to_binary(n)))
     'AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA%3D'
-    >>> urlquote(hhc(n))
+    >>> hhc_url_quote(hhc(n))
     'JK84xqGD9FMXPNubPghADlRhBUzlqRscC2h~8xmi99PvuQsUCIB2CHGhMUQR8FLm72.Hbbctkqi89xspay~y4'
 
 Massive savings.
@@ -49,9 +49,9 @@ Massive savings.
 
 If you're currently doing your Base64 encoding the naive way, then yes:
 
-    >>> sum(len(urlquote(base64.urlsafe_b64encode(long_to_binary(n)))) for n in xrange(10 ** 5))
+    >>> sum(len(hhc_url_quote(base64.urlsafe_b64encode(long_to_binary(n)))) for n in xrange(10 ** 5))
     531584
-    >>> sum(len(urlquote(hhc(n))) for n in xrange(10 ** 5))
+    >>> sum(len(hhc_url_quote(hhc(n))) for n in xrange(10 ** 5))
     295578
 
 ### But what if I use Base64 without padding?
@@ -61,23 +61,23 @@ question](http://stackoverflow.com/a/561704/76900):
 
     >>> from hexahexacontadecimal.num_encode_base64 import num_encode as num_encode_base64
     >>> n = 64 ** 5 + 1
-    >>> urlquote(num_encode_base64(n))
+    >>> hhc_url_quote(num_encode_base64(n))
     'BAAAAB'
-    >>> urlquote(hhc(n))
+    >>> hhc_url_quote(hhc(n))
     'ucrDZ'
     >>> n = 66 ** 5 + 1
-    >>> urlquote(num_encode_base64(n))
+    >>> hhc_url_quote(num_encode_base64(n))
     'BKpRQh'
-    >>> urlquote(hhc(n))
+    >>> hhc_url_quote(hhc(n))
     '100001'
     >>> n = 2 ** 512
-    >>> urlquote(num_encode_base64(n))
+    >>> hhc_url_quote(num_encode_base64(n))
     'EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-    >>> urlquote(hhc(n))
+    >>> hhc_url_quote(hhc(n))
     'JK84xqGD9FMXPNubPghADlRhBUzlqRscC2h~8xmi99PvuQsUCIB2CHGhMUQR8FLm72.Hbbctkqi89xspay~y4'
-    >>> sum(len(urlquote(num_encode_base64(n))) for n in xrange(10 ** 5))
+    >>> sum(len(hhc_url_quote(num_encode_base64(n))) for n in xrange(10 ** 5))
     295840
-    >>> sum(len(urlquote(hhc(n))) for n in xrange(10 ** 5))
+    >>> sum(len(hhc_url_quote(hhc(n))) for n in xrange(10 ** 5))
     295578
 
 Why settle for less than perfect?
@@ -89,13 +89,13 @@ from __future__ import absolute_import, division, print_function
 from io import StringIO
 import urllib
 
-__all__ = ['hhc', 'hhc_to_int']
+__all__ = ['hhc', 'hhc_to_int', 'hhc_url_quote']
 
 BASE66_ALPHABET = u"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_.~"
 BASE = len(BASE66_ALPHABET)
 
 
-def urlquote(s, safe=None):
+def hhc_url_quote(s, safe=None):
     """Like urllib.quote() but don't escape ~, in accordance with RFC3986."""
 
     return urllib.quote(s, safe='~' + (safe or ''))

@@ -123,6 +123,7 @@ Initial release.
 
 * Shorter, more Pythonic method names. The main function is now simply called `hhc`, styled after Python's built in `hex` function. To decode the same, `hhc_to_int` is now used.
 * `import * from hexahexacontadecimal` now only imports the main functions.
+* `urlquote` was renamed to `hhc_url_quote` to make it easier to differentiate from the standard library method.
 
 ## License
 
