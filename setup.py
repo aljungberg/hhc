@@ -10,7 +10,7 @@ except (IOError, OSError, ImportError):
 
 setup(
     name='hexahexacontadecimal',
-    version='2.0',
+    version='2.1',
     description='Encode and decode hexahexacontadecimal numbers, a compact number representation for URLs.',
     author='Alexander Ljungberg',
     author_email='aljungberg@slevenbits.com',

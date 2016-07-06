@@ -5,7 +5,7 @@
 
 Hexahexacontadecimal is a compact format to express a number or binary data in a URL. It uses all characters allowed in
 a URL without escaping -- the [unreserved characters](http://tools.ietf.org/html/rfc3986#section-2.3) -- making it the
-shortest possible way to express an integer in a URL.
+shortest possible way to express a positive integer in a URL.
 
 Note that `urllib.quote` [escapes the tilde character (~)](http://bugs.python.org/issue16285), which is not necessary as
 of RFC3986. The `hhc_url_quote` function is provided to help with this.
@@ -91,12 +91,20 @@ Why settle for less than perfect?
 
 ### Sorting
 
-If you wish to be able to sort a list of HHC values numerically there is a variant of HHC that allows this. See `sortable_hhc`.
+If you wish to be able to sort a list of HHC values numerically there is a variant of HHC that allows this. See
+`sortable_hhc`.
 
     >>> hhc(67) < hhc(128)
     False
     >>> sortable_hhc(67, width=2) < sortable_hhc(128, width=2)
     True
+
+### Negative Numbers
+
+HHC expresses negative numbers by prefixing the number with `,` (since minus is taken). This is not a URL safe character
+so if you URL encode a negative number with HHC you end up with `%2C` which takes up 2 extra characters. For this reason
+HHC is not necessarily the shortest representation of a negative number.
+
 
 """
 
@@ -107,6 +115,7 @@ import urllib
 
 __all__ = ['hhc', 'hhc_to_int', 'hhc_url_quote', 'sortable_hhc', 'sortable_hhc_to_int']
 
+NEGATIVE_PREFIX = b","
 BASE66_ALPHABET = b"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_.~"
 SORTABLE_BASE66_ALPHABET = b"-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~"
 BASE = len(BASE66_ALPHABET)
@@ -167,10 +176,17 @@ def hhc(n, alphabet=BASE66_ALPHABET):
     >>> hhc(302231454903657293676544)
     'iFsGUkO.0tsxw'
 
+    Negative numbers are not URL safe and should be avoided:
+    >>> hhc(-67)
+    ',11'
+
     """
 
     if n == 0:
         return alphabet[0]
+
+    if n < 0:
+        return NEGATIVE_PREFIX + hhc(-n, alphabet=alphabet)
 
     r = BytesIO()
     while n:
@@ -195,10 +211,19 @@ def hhc_to_int(s, alphabet=BASE66_ALPHABET):
     67
     >>> hhc_to_int('iFsGUkO.0tsxw')
     302231454903657293676544L
+    >>> hhc_to_int(',11')
+    -67
 
     """
 
+    if s == '' or s is None:
+        raise ValueError("invalid literal for hhc_to_int: {}".format(s))
+
+    if s[0] == NEGATIVE_PREFIX:
+        return -hhc_to_int(s[1:], alphabet=alphabet)
+
     n = 0
+
     for c in s:
         n = n * BASE + alphabet.index(c)
 
