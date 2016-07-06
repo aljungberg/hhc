@@ -105,6 +105,9 @@ HHC expresses negative numbers by prefixing the number with `,` (since minus is 
 so if you URL encode a negative number with HHC you end up with `%2C` which takes up 2 extra characters. For this reason
 HHC is not necessarily the shortest representation of a negative number.
 
+The sortable variant also supports negative numbers and will yield the natural sort order (small to large),
+like -2, -1, 0, 1, 2.
+
 
 ## Installation
 

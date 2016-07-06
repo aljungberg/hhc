@@ -105,6 +105,8 @@ HHC expresses negative numbers by prefixing the number with `,` (since minus is 
 so if you URL encode a negative number with HHC you end up with `%2C` which takes up 2 extra characters. For this reason
 HHC is not necessarily the shortest representation of a negative number.
 
+The sortable variant also supports negative numbers and will yield the natural sort order (small to large),
+like -2, -1, 0, 1, 2.
 
 """
 
@@ -230,7 +232,7 @@ def hhc_to_int(s, alphabet=BASE66_ALPHABET):
     return n
 
 
-def sortable_hhc(n, width=0):
+def sortable_hhc(n, width=0, alphabet=SORTABLE_BASE66_ALPHABET):
     """
 
     Represent a number in sortable hexahexacontadecimal, a compact format of unreserved URL characters which sorts
@@ -250,6 +252,8 @@ def sortable_hhc(n, width=0):
     '.-'
     >>> sortable_hhc(67)
     '..'
+    >>> sortable_hhc(6700)
+    '.XW'
     >>> sortable_hhc(302231454903657293676544)
     'fDpEShMz-qput'
 
@@ -272,13 +276,34 @@ def sortable_hhc(n, width=0):
     >>> sorted([sortable_hhc(x, width=2) for x in range(512)]) == [sortable_hhc(x, width=2) for x in range(512)]
     True
 
+    Negative numbers are supported and will work like you expect, sorting like -2, -1, 0, 1, 2. (Note that the alphabet
+    is reversed for negative numbers.)
+
+    >>> sortable_hhc(-67)
+    ',zz'
+    >>> sortable_hhc(-6700)
+    ',zST'
+    >>> sortable_hhc(-50, width=5) < sortable_hhc(-1, width=5)
+    True
+    >>> sortable_hhc(-1, width=5) < sortable_hhc(0, width=5)
+    True
+    >>> sortable_hhc(0, width=5) < sortable_hhc(1, width=5)
+    True
+    >>> sortable_hhc(1, width=5) < sortable_hhc(50, width=5)
+    True
+    >>> sorted([sortable_hhc(x, width=5) for x in range(-512, 512)]) == [sortable_hhc(x, width=5) for x in range(-512, 512)]
+    True
+
     """
 
-    r = hhc(n, alphabet=SORTABLE_BASE66_ALPHABET)
-    return r.rjust(width, SORTABLE_BASE66_ALPHABET[0]) if width else r
+    if n < 0:
+        return NEGATIVE_PREFIX + sortable_hhc(-n, width=width - 1, alphabet=alphabet[::-1])
+
+    r = hhc(n, alphabet=alphabet)
+    return r.rjust(width, alphabet[0]) if width else r
 
 
-def sortable_hhc_to_int(s, alphabet=BASE66_ALPHABET):
+def sortable_hhc_to_int(s):
     """Parse a number expressed in sortable hexahexacontadecimal as an integer (or long).
 
     >>> sortable_hhc_to_int('-')
@@ -291,11 +316,24 @@ def sortable_hhc_to_int(s, alphabet=BASE66_ALPHABET):
     66
     >>> sortable_hhc_to_int('..')
     67
+    >>> sortable_hhc_to_int('.XW')
+    6700
     >>> sortable_hhc_to_int('----..')
     67
     >>> sortable_hhc_to_int('fDpEShMz-qput')
     302231454903657293676544L
 
+    Negative numbers are supported.
+
+    >>> sortable_hhc_to_int(',zST')
+    -6700
+
     """
+
+    if s == '' or s is None:
+        raise ValueError("invalid literal for sortable_hhc_to_int: {}".format(s))
+
+    if s[0] == NEGATIVE_PREFIX:
+        return -hhc_to_int(s[1:], alphabet=SORTABLE_BASE66_ALPHABET[::-1])
 
     return hhc_to_int(s, SORTABLE_BASE66_ALPHABET)
