@@ -140,6 +140,10 @@ To run the unit tests:
 
 ## Changelog
 
+### 2.2.1
+
+* Fixed: pandoc accidentally required.
+
 ### 2.2
 
 * Python 3 support (backwards compatible with Python 2.7).
