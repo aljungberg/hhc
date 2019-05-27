@@ -7,10 +7,14 @@ HHC is a compact format to express a number or binary data in a URL. It uses all
 a URL -- the [unreserved characters](http://tools.ietf.org/html/rfc3986#section-2.3) -- making it the most concise way to express a positive integer in a URL.
 
 
-| Decimal | Hexadecimal | Naive Base64[1] | Custom Base64[2] | HHC |
-| ------- | ----------- | --------------- | ---------------- | --- |
-| 65 | `41` | `QQ%3D%3D` | `BB` | `~` | 
-| 302231454903657293676544 | `40000000000000000000` (20) | `QAAAAAAAAAAAAA%3D%3D` (20) | `BAAAAAAAAAAAAA` (14) | `fDpEShMz-qput` (13) |
+| Format | Example 1 | Example 2 |
+| ------ | --- | ------------------------ |
+| Decimal | 65 | 302231454903657293676544 |
+| Hex | `41` | `40000000000000000000` (20) |
+| Naive Base64[1] | `QQ%3D%3D`| `QAAAAAAAAAAAAA%3D%3D` (20) |
+| Custom Base64[2] | `BB` | `BAAAAAAAAAAAAA` (14) |
+| HHC | `~` | `fDpEShMz-qput` (13) |
+
 
 Beyond being the pinacle of numeral systems for URLs, it's also a ready to go batteries included solution, unlike the most obvious alternative (base64).
 
