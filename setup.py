@@ -1,21 +1,25 @@
-import setuptools
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
 
-description = "Encode and decode HHC numbers, a compact number representation for URLs."
-try:
-    import pypandoc
-    # This bit requires pandoc. On Mac OS X:
-    #   brew install haskell-platform && cabal update && cabal install pandoc
-    description = pypandoc.convert('README.md', 'rst', format='markdown')
-except:
-    pass
+from io import open
+from os import path
+from setuptools import setup
 
-setuptools.setup(
+here = path.abspath(path.dirname(__file__))
+
+with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+
+
+setup(
     name='hhc',
     version='3.0.0',
     description='The best way to express a number in a URL.',
     author='Alexander Ljungberg',
     author_email='aljungberg@slevenbits.com',
-    url='https://github.com/aljungberg/hexahexacontadecimal',
+    url='https://github.com/aljungberg/hhc',
     packages=['hhc'],
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
     keywords=["base64", "hexahexacontadecimal", "hhc", "base66", "url"],
@@ -33,5 +37,6 @@ setuptools.setup(
         "License :: OSI Approved :: BSD License",
         "Operating System :: POSIX",
     ],
-    long_description=description
+    long_description=long_description,
+    long_description_content_type='text/markdown',
 )
