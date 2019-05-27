@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 from nose.tools import eq_, ok_
 
 from hhc import hhc_to_int, hhc2, hhc2_to_int
