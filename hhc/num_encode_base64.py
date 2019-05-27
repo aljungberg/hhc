@@ -3,7 +3,7 @@
 
 """
 
-An alternative to hexahexacontadecimal for comparison and testing purposes, by Miles at http://stackoverflow.com/a/561704/76900.
+An alternative to HHC for comparison and testing purposes, by Miles at http://stackoverflow.com/a/561704/76900.
 
 """
 
