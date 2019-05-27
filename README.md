@@ -9,11 +9,11 @@ a URL -- the [unreserved characters](http://tools.ietf.org/html/rfc3986#section-
 
 | Format | Example 1 | Example 2 |
 | ------ | --- | ------------------------ |
-| Decimal | 65 | 302231454903657293676544 |
+| Decimal | `65` | `302231454903657293676544` |
 | Hex | `41` | `40000000000000000000` (20) |
 | Naive Base64[1] | `QQ%3D%3D`| `QAAAAAAAAAAAAA%3D%3D` (20) |
 | Custom Base64[2] | `BB` | `BAAAAAAAAAAAAA` (14) |
-| HHC | `~` | `fDpEShMz-qput` (13) |
+| **HHC** | **`~`** | **`fDpEShMz-qput`** (13) |
 
 
 Beyond being the pinacle of numeral systems for URLs, it's also a ready to go batteries included solution, unlike the most obvious alternative (base64).
