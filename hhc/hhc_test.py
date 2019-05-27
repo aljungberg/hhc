@@ -1,6 +1,6 @@
 from nose.tools import eq_, ok_
 
-from hhc import hhc_to_int
+from hhc import hhc_to_int, hhc2, hhc2_to_int
 from . import hhc
 
 
@@ -28,6 +28,16 @@ def test_hhc__with_allow_special__should_not_pad_specials():
     eq_(hhc(67, allow_special=True), '..')
 
 
+def test_hhc2__without_allow_special__should_pad_specials():
+    eq_(hhc2(64, allow_special=False), '0.')
+    eq_(hhc2(4288, allow_special=False), '0..')
+
+
+def test_hhc__without_allow_special__should_not_pad_specials():
+    eq_(hhc2(64), '.')
+    eq_(hhc2(4288), '..')
+
+
 def test_hhc__with_negative_number__should_not_pad_specials():
     eq_(hhc(-64, allow_special=False), ',.')
     eq_(hhc(-4288, allow_special=False), ',..')
@@ -43,6 +53,23 @@ def test_hhc_to_int():
     eq_(hhc_to_int(',zz'), -67)
     eq_(hhc_to_int(',zST'), -6700)
     eq_(hhc_to_int(',Jl9kXHc.~8945'), -302231454903657293676544)
+
+
+def test_hhc2_to_int():
+    eq_(hhc2_to_int('0'), 0)
+    eq_(hhc2_to_int('-'), 62)
+    eq_(hhc2_to_int('~'), 65)
+    eq_(hhc2_to_int('.'), 64)
+    eq_(hhc2_to_int('0.'), 64)
+    eq_(hhc2_to_int('..'), 4288)
+    eq_(hhc2_to_int('0..'), 4288)
+    eq_(hhc2_to_int('.-'), 4286)
+    eq_(hhc2_to_int('.XW'), 280994)
+    eq_(hhc2_to_int('fDpEShMz-qput'), 281524654803017445463699)
+    eq_(hhc2_to_int(',0'), 0)  # negative zero
+    eq_(hhc2_to_int(',zz'), -4087)
+    eq_(hhc2_to_int(',zST'), -267593)
+    eq_(hhc2_to_int(',fDpEShMz-qput'), -281524654803017445463699)
 
 
 def test_hhc_to_int__double_minus__should_crash():

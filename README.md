@@ -83,6 +83,10 @@ To run the unit tests:
 
 ## Changelog
 
+### 3.0.1
+
+* Backported `.` and `..` special case handling to HHC 2.
+
 ### 3.0
 
 * Renamed to HHC.

@@ -60,9 +60,7 @@ def hhc(n, width=0, allow_special=False, alphabet=HHC_ALPHABET):
     if n < 0:
         return NEGATIVE_PREFIX + hhc(-n, width=width - 1, allow_special=True, alphabet=alphabet[::-1])
 
-    r = hhc2(n, alphabet=alphabet)
-    if not allow_special and (n == 1 or n == 67):
-        r = "-" + r
+    r = hhc2(n, allow_special=allow_special, alphabet=alphabet)
     return r.rjust(width, alphabet[0]) if width else r
 
 
@@ -102,7 +100,7 @@ def hhc_to_int(s):
     return hhc2_to_int(s, HHC_ALPHABET)
 
 
-def hhc2(n, alphabet=LEGACY_ALPHABET):
+def hhc2(n, alphabet=LEGACY_ALPHABET, allow_special=True):
     """Represent a number in the HHC legacy format.
 
     This version of HHC is deprecated.
@@ -130,14 +128,19 @@ def hhc2(n, alphabet=LEGACY_ALPHABET):
         return alphabet[0]
 
     if n < 0:
-        return NEGATIVE_PREFIX + hhc2(-n, alphabet=alphabet)
+        return NEGATIVE_PREFIX + hhc2(-n, allow_special=True, alphabet=alphabet)
 
     r = StringIO()
     while n:
         n, t = divmod(n, BASE)
         r.write(alphabet[t])
 
-    return r.getvalue()[::-1]
+    rv = r.getvalue()[::-1]
+
+    if not allow_special and rv in ('.', '..'):
+        return alphabet[0] + rv
+    else:
+        return rv
 
 
 def hhc2_to_int(s, alphabet=LEGACY_ALPHABET):
