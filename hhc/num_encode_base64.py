@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-"""
-
-An alternative to HHC for comparison and testing purposes, by Miles at http://stackoverflow.com/a/561704/76900.
+"""A base64 based alternative to HHC for comparison and testing purposes.
 
 """
 
 import string
+
+# This one is by Miles at http://stackoverflow.com/a/561704/76900.
 
 ALPHABET = string.ascii_uppercase + string.ascii_lowercase + \
            string.digits + '-_'
