@@ -36,11 +36,11 @@ of RFC3986, so if you use this on HHC data you'll waste bytes. Use the provided 
 
 ### Sorting
 
-You can sort HHC encoded values in numerical order using a standard alphabetic sort. The HHC value strings need to be of equal length for this property to hold. You can left pad them with `-` just before sorting to make them so.    
+You can sort HHC encoded values in numerical order using a standard alphabetical sort. The HHC value strings need to be of equal length for this property to hold. You can left pad them with `-` just before sorting to make them so.
 
-The `width` parameter of the `hhc` function can be used to do this padding at encoding time. It's best not to because doing this wastes bytes and requires you to know your maximum value ahead of time.
+The `width` parameter of the `hhc` function can be used to do this padding at encoding time. It's better to pad at sort time to save bytes and so that you don't need to predict your maximum width ahead of time.
 
-The sortability property holds for negative numbers too.
+This ordering property holds for negative numbers too (-2, -1, 0, 1, 2...).
 
 ### Negative Numbers
 
@@ -54,13 +54,20 @@ HHC expresses negative numbers by prefixing the number with `,` (since minus is 
 
 ### Is HHC really better than base64 in URLs?
 
-There are three parts to this.
+There are two parts to this.
 
-First, if you do a naive base64 encoding, you'd rewrite your number as a binary string and then use a URL-safe base64 encoder on that binary string. You'd likely get a very long string out with padding on one end because your binary conversion gave you a 
+First, a naive base64 approach would be simple, but very inefficient. Take the 64 bit binary representation of your number and base64 encode it in an URL-safe manner: 
 
-First, you can't naively use a standard base64 encoder to efficiently encode numbers or binaries into URLs, because the common version is not URL-safe. With URL escaping on top of your encoding, you get strings much longer than what HHC would make for you.
+    >>> base64.urlsafe_b64encode(struct.pack("<Q", 10))
+    b'AQAAAAAAAAA='
+    >>> hhc(10)
+    '8'
 
-The second part is that even if you use URL-safe base64, HHC is still better. Being radix 66 rather than radix 64, HHC is more compact.
+Woah, that's 12 times as long as the equivalent HHC encoding. 
+
+Of course we can do better than this naive code (use a dynamic width binary input and strip padding).
+
+But the second part is that even if you take the time to write that, HHC is still better. Being radix 66 rather than radix 64, HHC is more compact.
 
     >>> sum(len(hhc_url_quote(num_encode_base64(n))) for n in range(10 ** 6))
     3733696
@@ -74,11 +81,11 @@ Look at those massive savings!
 
 Hexahexaconta. In [IUPAC nomenclature](https://en.wikipedia.org/wiki/IUPAC_numerical_multiplier) (what you use to describe atoms in a molecule), 66 is hexahexaconta. 
 
-I originally called this numeral system "hexahexacontadecimal" to make it sound like "hexadecimal" but as amusing as I found that, it was annoyingly long to type. Also, with the decimal suffix it was akin to saying "sixty-six-tenth" which didn't make sense.
+I originally called this numeral system "hexahexacontadecimal" to make it sound like "hexadecimal" but as amusing as I found that, it was annoyin to type. Also, with the decimal suffix it was akin to saying "sixty-six-tenth" which didn't make sense.
 
 ### With compression, couldn't I make shorter representations?
 
-Some data is compressible, some is not. For random data, there is no lossless compression algorithm that can compress the data, and in fact on average any such algorithm would make the data longer. HHC will still be the most compact format.
+Some data is compressible, some is not. For random data, there is no lossless compression algorithm that can compress the data, and in fact on average any such algorithm would make the data longer. HHC will still be the most compact.
 
 ## Tests
 
