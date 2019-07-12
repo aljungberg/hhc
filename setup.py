@@ -15,7 +15,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='hhc',
-    version='3.0.1b',
+    version='3.0.2',
     description='The best way to express a number in a URL.',
     author='Alexander Ljungberg',
     author_email='aljungberg@slevenbits.com',

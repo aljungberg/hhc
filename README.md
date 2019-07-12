@@ -97,6 +97,12 @@ To run the unit tests:
 
 ## Changelog
 
+### 3.0.2
+
+* Fixed Python 2 compatibility.
+
+(This was already fixed in 3.0.1 but didn't make it into the Pypi release version.)
+
 ### 3.0.1
 
 * Backported `.` and `..` special case handling to HHC 2.
