@@ -16,12 +16,11 @@ a URL -- the [unreserved characters](http://tools.ietf.org/html/rfc3986#section-
 | **HHC** | **`fDpEShMz-qput`** | **13** |
 
 
-Beyond being the pinacle of numeral systems for URLs, it's also a ready to go batteries included solution, unlike the most obvious alternative (base64).
+Beyond being the pinnacle of numeral systems for URLs, HHC is also a ready to go, batteries included solution. This is unlike the most obvious alternative, base64.
 
-HHC values sort alphabetically like the numbers they represent, so you can sort a long list of HHC values from smallest to largest without first decoding them (with one caveat, see below). 
+HHC encoded values sort alphabetically like the numbers they represent, so you can sort a long list of HHC values from smallest to largest without first decoding them (with one caveat, see below). 
 
-HHC works for negative numbers too. A non-URL safe prefix is used in this case so you may need to URL quote the result. Note that `urllib.quote` [escapes the tilde character (~)](http://bugs.python.org/issue16285), which is not necessary as
-of RFC3986, so if you use this on HHC data you'll waste bytes. Use the provided `hhc_url_quote` function instead. Non-negative HHC values don't need any URL quoting.
+HHC works for negative numbers. HHC uses a non-URL safe prefix in this case, so you may need to URL quote the result. Note that `urllib.quote` [escapes the tilde character (~)](http://bugs.python.org/issue16285), which is unnecessary as of RFC3986. If you use this on HHC data, you'll waste bytes. Use the provided `hhc_url_quote` function instead. Non-negative HHC values don't need any URL quoting.
 
 **[1]**: `hhc_url_quote(base64.urlsafe_b64encode(long_to_binary(X)))`   
 **[2]**: Using the base64-like encoding scheme found [here](http://stackoverflow.com/a/561704/76900).
@@ -36,9 +35,9 @@ of RFC3986, so if you use this on HHC data you'll waste bytes. Use the provided 
 
 ### Sorting
 
-You can sort HHC encoded values in numerical order using a standard alphabetical sort. The HHC value strings need to be of equal length for this property to hold. You can left pad them with `-` just before sorting to make them so.
+You can sort HHC encoded values in numerical order using a standard alphabetical sort. The HHC value strings need to be of equal length for this property to hold. You can left-pad them with `-` just before sorting to make them so.
 
-The `width` parameter of the `hhc` function can be used to do this padding at encoding time. It's better to pad at sort time to save bytes and so that you don't need to predict your maximum width ahead of time.
+The `width` parameter of the `hhc` function can do this padding at encoding time. It's better to pad at sort time to save bytes and so you need not predict your maximum width ahead of time.
 
 This ordering property holds for negative numbers too (-2, -1, 0, 1, 2...).
 
@@ -56,7 +55,7 @@ HHC expresses negative numbers by prefixing the number with `,` (since minus is 
 
 There are two parts to this.
 
-First, a naive base64 approach would be simple, but very inefficient. Take the 64 bit binary representation of your number and base64 encode it in an URL-safe manner: 
+First, a naïve base64 approach would be simple, but very inefficient. Take the 64 bit binary representation of your number and base64 encode it in an URL-safe manner: 
 
     >>> base64.urlsafe_b64encode(struct.pack("<Q", 10))
     b'AQAAAAAAAAA='
@@ -65,9 +64,7 @@ First, a naive base64 approach would be simple, but very inefficient. Take the 6
 
 Woah, that's 12 times as long as the equivalent HHC encoding. 
 
-Of course we can do better than this naive code (use a dynamic width binary input and strip padding).
-
-But the second part is that even if you take the time to write that, HHC is still better. Being radix 66 rather than radix 64, HHC is more compact.
+We can do better than this naïve code (use a dynamic width binary input and strip padding). But the second part is that even if you take the time to write that, HHC is still better. Being radix 66 rather than radix 64, HHC is more compact.
 
     >>> sum(len(hhc_url_quote(num_encode_base64(n))) for n in range(10 ** 6))
     3733696
@@ -81,7 +78,7 @@ Look at those massive savings!
 
 Hexahexaconta. In [IUPAC nomenclature](https://en.wikipedia.org/wiki/IUPAC_numerical_multiplier) (what you use to describe atoms in a molecule), 66 is hexahexaconta. 
 
-I originally called this numeral system "hexahexacontadecimal" to make it sound like "hexadecimal" but as amusing as I found that, it was annoyin to type. Also, with the decimal suffix it was akin to saying "sixty-six-tenth" which didn't make sense.
+I originally called this numeral system "hexahexacontadecimal" to make it sound like "hexadecimal" but as amusing as I found that, it was annoying to type. Also, with the decimal suffix it was akin to saying "sixty-six-tenth" which made little sense.
 
 ### With compression, couldn't I make shorter representations?
 
